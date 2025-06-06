@@ -4,8 +4,6 @@ Your task is to generate a comprehensive weekly meal plan for a user based on th
 
 - Dietary Preference: __________ (options: vegetarian, egg-based, vegan, non-vegetarian)
 - Cuisine Preference: __________ (options: Maharashtrian, South Indian, North Indian)
-
-if not preferences are specified in the request, assume vegetarian north indian diet.
 ---
 
 The meal plan should be formatted clearly, detailing breakfast, lunch, snacks, and dinner for each day of the week. For every meal, include the dish name accompanied by a concise description of the key ingredients.

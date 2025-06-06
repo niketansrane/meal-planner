@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Planner</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(120deg, #f7f7f7 60%, #eaf6ff 100%); margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px #0002; padding: 40px 32px; display: flex; flex-direction: row; gap: 48px; align-items: flex-start; min-height: 80vh; }
+        h1 { text-align: left; color: #2d3a4a; margin-top: 0; font-size: 2.2em; letter-spacing: 1px; }
+        label { font-weight: 600; margin-top: 18px; display: block; color: #1a6dc2; letter-spacing: 0.5px; }
+        textarea, input[type=text] { width: 100%; padding: 10px; margin-top: 6px; border-radius: 6px; border: 1px solid #b3c6e0; font-size: 1.05em; background: #f8fbff; transition: border 0.2s; }
+        textarea:focus, input[type=text]:focus { border: 1.5px solid #2d8cf0; outline: none; }
+        button { margin-top: 24px; padding: 14px 36px; background: linear-gradient(90deg, #2d8cf0 60%, #1a6dc2 100%); color: #fff; border: none; border-radius: 6px; font-size: 1.15em; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px #2d8cf033; transition: background 0.2s, box-shadow 0.2s; }
+        button:hover { background: #1a6dc2; box-shadow: 0 4px 16px #2d8cf044; }
+        .calendar { margin-top: 40px; overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; background: #fafbfc; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px #0001; }
+        th, td { border: 1px solid #e0e0e0; padding: 16px 12px; text-align: left; vertical-align: top; font-size: 1.05em; }
+        th { background: #f0f4f8; color: #2d3a4a; font-size: 1.1em; letter-spacing: 0.5px; }
+        .meal-title { font-weight: bold; color: #2d8cf0; font-size: 1.08em; }
+        .notes { margin-top: 28px; background: #eaf6ff; padding: 18px; border-radius: 8px; color: #2d3a4a; font-size: 1.08em; box-shadow: 0 2px 8px #2d8cf022; }
+        .left-panel { flex: 1; min-width: 340px; max-width: 420px; }
+        .right-panel { flex: 2; min-width: 400px; }
+        #system-prompt { background:#f0f0f0; color:#888; border:1px solid #b3c6e0; border-radius:6px; padding:14px; margin-bottom:16px; font-size:1.05em; min-height:180px; width:100%; white-space:pre-line; box-sizing: border-box; line-height: 1.5; }
+        .meal-link { color:#2d8cf0; cursor:pointer; text-decoration:underline; font-weight:500; }
+        .meal-link:hover { color:#1a6dc2; text-decoration:underline wavy; }
+        #meal-modal h2 { color: #2d8cf0; font-size: 1.3em; margin-bottom: 10px; }
+        #meal-modal ul { margin: 0 0 10px 0; padding-left: 18px; }
+        #meal-modal strong { color: #1a6dc2; }
+        #close-modal { color: #888; transition: color 0.2s; }
+        #close-modal:hover { color: #2d8cf0; }
+        @media (max-width: 900px) {
+            .container { flex-direction: column; gap: 0; padding: 10px; }
+            .left-panel, .right-panel { min-width: 0; max-width: 100%; }
+            .calendar { margin-top: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h1>Personalized Meal Planner</h1>
+            <form id="meal-form">
+                <label for="system-prompt">System Prompt</label>
+                <div id="system-prompt">You are a highly skilled nutritionist with extensive knowledge in creating personalized meal plans that cater to individual dietary preferences and cultural cuisines. Your expertise includes designing balanced and flavorful meals suitable for a variety of dietary choices such as vegetarian, vegan, egg-based, and non-vegetarian, with an emphasis on Indian cuisine.
+
+Your task is to generate a comprehensive weekly meal plan for a user based on their specific input. Please consider the following details:
+
+- Dietary Preference: __________ (options: vegetarian, egg-based, vegan, non-vegetarian)
+- Cuisine Preference: __________ (options: Maharashtrian, South Indian, North Indian)
+---
+
+The meal plan should be formatted clearly, detailing breakfast, lunch, snacks, and dinner for each day of the week. For every meal, include the dish name accompanied by a concise description of the key ingredients.
+
+---
+
+Ensure the meal plan is nutritionally balanced, integrating a variety of nutrients, while also taking into account any specified dietary restrictions or allergies.
+
+---
+
+Example Format:
+**Day 1**
+- Breakfast: [Kande Pohe] - [Brief Description]
+- Lunch: [Chapati, Moong Dal, Cabbage Subji] - [Brief Description]
+- Dinner: [Bhakari, Brinjal Curry] - [Brief Description]
+
+---
+
+Maintain caution regarding common allergens and strive for diversity in the meal selections, avoiding any repetition of dishes throughout the week.
+                </div>
+                <label for="user-prompt">User Prompt</label>
+                <textarea id="user-prompt" rows="2" required style="width:100%;"></textarea>
+                <button type="submit">Generate</button>
+            </form>
+        </div>
+        <div class="right-panel">
+            <div id="calendar-container" class="calendar"></div>
+            <div id="notes" class="notes" style="display:none;"></div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // No action needed for system prompt
+    });
+
+    document.getElementById('meal-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const systemPrompt = document.getElementById('system-prompt').innerText;
+        const userPrompt = document.getElementById('user-prompt').value;
+        document.getElementById('calendar-container').innerHTML = '<em>Generating meal plan...</em>';
+        document.getElementById('notes').style.display = 'none';
+        try {
+            const res = await fetch('/api/meal-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ system_prompt: systemPrompt, user_prompt: userPrompt })
+            });
+            if (!res.ok) throw new Error('Failed to generate meal plan');
+            const data = await res.json();
+            renderCalendar(data.meals);
+            if (data.additional_notes) {
+                document.getElementById('notes').textContent = data.additional_notes;
+                document.getElementById('notes').style.display = 'block';
+            }
+        } catch (err) {
+            document.getElementById('calendar-container').innerHTML = '<span style="color:red">Error: ' + err.message + '</span>';
+        }
+    });
+
+    function renderCalendar(mealsForDays) {
+        if (!mealsForDays || !mealsForDays.length) {
+            document.getElementById('calendar-container').innerHTML = '<em>No meal plan found.</em>';
+            return;
+        }
+        // Render table: Days as rows, Breakfast/Lunch/Dinner as columns
+        let html = '<table><thead><tr><th>Day</th><th>Breakfast</th><th>Lunch</th><th>Dinner</th></tr></thead><tbody>';
+        mealsForDays.forEach(dayObj => {
+            html += `<tr><td class="meal-title">${dayObj.day}</td>`;
+            ['breakfast', 'lunch', 'dinner'].forEach(type => {
+                const meal = dayObj[type];
+                if (meal && meal.name) {
+                    html += `<td><span class="meal-link" style="color:#2d8cf0;cursor:pointer;text-decoration:underline;" onclick='showMealDetails(${JSON.stringify(meal).replace(/'/g, "&#39;")})'>${meal.name}</span></td>`;
+                } else {
+                    html += '<td>-</td>';
+                }
+            });
+            html += '</tr>';
+        });
+        html += '</tbody></table>';
+        // Add modal for meal details
+        html += `
+        <div id="meal-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:32px 24px 24px 24px;border-radius:8px;max-width:400px;width:90vw;box-shadow:0 2px 16px #0003;position:relative;">
+                <span id="close-modal" style="position:absolute;top:8px;right:16px;font-size:1.5em;cursor:pointer;">&times;</span>
+                <div id="modal-content"></div>
+            </div>
+        </div>`;
+        document.getElementById('calendar-container').innerHTML = html;
+        // Modal close handler
+        document.getElementById('close-modal').onclick = function() {
+            document.getElementById('meal-modal').style.display = 'none';
+        };
+        document.getElementById('meal-modal').onclick = function(e) {
+            if (e.target === this) this.style.display = 'none';
+        };
+    }
+    // Show meal details in modal
+    function showMealDetails(meal) {
+        let html = `<h2 style='margin-top:0;'>${meal.name}</h2>`;
+        html += `<strong>Ingredients:</strong><ul>`;
+        (meal.ingredients || []).forEach(ing => { html += `<li>${ing}</li>`; });
+        html += `</ul>`;
+        html += `<strong>Instructions:</strong><br><span>${meal.instructions || ''}</span><br>`;
+        if (meal.dietary_restrictions) {
+            html += `<strong>Dietary:</strong> ${meal.dietary_restrictions}<br>`;
+        }
+        document.getElementById('modal-content').innerHTML = html;
+        document.getElementById('meal-modal').style.display = 'flex';
+    }
+    </script>
+</body>
+</html>
