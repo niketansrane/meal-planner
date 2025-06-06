@@ -3,8 +3,8 @@ from textwrap import dedent
 
 from openai import AzureOpenAI
 
-from .config import Config
-from .models import (
+from config import Config
+from models import (
     MealPlanResponse,
     UserMealPreferences,
     UserRequest,
