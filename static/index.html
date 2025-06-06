@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plan Your Weekly Meals!</title>
+    <style>
+      :root {
+        --primary: #2d8cf0;
+        --primary-dark: #1a6dc2;
+        --light-bg: #f7f7f7;
+        --card-bg: #ffffff;
+        --text-dark: #2d3a4a;
+        --text-muted: #888;
+        --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(120deg, var(--light-bg) 60%, #eaf6ff 100%);
+        margin: 0;
+        padding: 0;
+        color: var(--text-dark);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 40px auto;
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      h1 {
+        font-size: 2.4em;
+        margin: 0 0 20px;
+        color: var(--primary-dark);
+      }
+
+      label {
+        font-weight: 600;
+        display: block;
+        margin: 16px 0 6px;
+        color: var(--primary-dark);
+      }
+
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #b3c6e0;
+        border-radius: 8px;
+        background: #f8fbff;
+        font-size: 1em;
+        transition: border 0.2s;
+      }
+
+      textarea:focus,
+      input[type="text"]:focus {
+        border-color: var(--primary);
+        outline: none;
+      }
+
+      button {
+        padding: 14px 32px;
+        background: linear-gradient(
+          90deg,
+          var(--primary) 60%,
+          var(--primary-dark) 100%
+        );
+        color: white;
+        font-size: 1.1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px var(--primary-dark);
+        transition: background 0.3s, box-shadow 0.3s;
+      }
+
+      button:hover {
+        background: var(--primary-dark);
+        box-shadow: 0 4px 12px var(--primary);
+      }
+
+      .grid-2 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+      }
+
+      .grid-2 > div {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .calendar {
+        overflow-x: auto;
+        margin-top: 24px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fafbfc;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      th,
+      td {
+        padding: 16px 12px;
+        text-align: left;
+        border: 1px solid #e0e0e0;
+        font-size: 1em;
+      }
+
+      th {
+        background: #f0f4f8;
+        color: var(--text-dark);
+      }
+
+      .meal-title {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .meal-link {
+        color: var(--primary);
+        cursor: pointer;
+        text-decoration: underline;
+        font-weight: 500;
+      }
+
+      .meal-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline wavy;
+      }
+
+      .notes {
+        background: #eaf6ff;
+        padding: 16px;
+        border-radius: 10px;
+        font-size: 1.05em;
+        box-shadow: 0 2px 8px #2d8cf022;
+        margin-top: 20px;
+      }
+
+      #meal-modal h2 {
+        color: var(--primary-dark);
+        font-size: 1.3em;
+        margin-bottom: 10px;
+      }
+
+      #meal-modal ul {
+        padding-left: 18px;
+      }
+
+      #meal-modal strong {
+        color: var(--primary-dark);
+      }
+
+      #close-modal {
+        color: var(--text-muted);
+        transition: color 0.2s;
+      }
+
+      #close-modal:hover {
+        color: var(--primary);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        .grid-2 {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Plan Your Weekly Meals!</h1>
+      <div class="grid-2">
+        <div>
+          <label for="system-prompt">Meal Planning Instructions (System Prompt)</label>
+          <textarea id="system-prompt" required rows="20">
+You are a highly skilled nutritionist with extensive knowledge in creating personalized meal plans that cater to individual dietary preferences and cultural cuisines. Your expertise includes designing balanced and flavorful meals suitable for a variety of dietary choices such as vegetarian, vegan, egg-based, and non-vegetarian, with an emphasis on Indian cuisine.
+
+Your task is to generate a comprehensive weekly meal plan for a user based on their specific input. Please consider the following details:
+
+- Dietary Preference: __________ (options: vegetarian, egg-based, vegan, non-vegetarian)
+- Cuisine Preference: __________ (options: Maharashtrian, South Indian, North Indian)
+---
+
+The meal plan should be formatted clearly, detailing breakfast, lunch, snacks, and dinner for each day of the week. For every meal, include the dish name accompanied by a concise description of the key ingredients.
+
+---
+
+Ensure the meal plan is nutritionally balanced, integrating a variety of nutrients, while also taking into account any specified dietary restrictions or allergies.
+
+---
+
+Example Format:
+**Day 1**
+- Breakfast: [Kande Pohe] - [Brief Description]
+- Lunch: [Chapati, Moong Dal, Cabbage Subji] - [Brief Description]
+- Dinner: [Bhakari, Brinjal Curry] - [Brief Description]
+
+---
+
+Maintain caution regarding common allergens and strive for diversity in the meal selections, avoiding any repetition of dishes throughout the week.
+        </textarea
+          >
+        </div>
+        <div>
+          <label for="user-prompt">Your Preferences (User Prompt)</label>
+          <textarea
+            id="user-prompt"
+            rows="5"
+            required
+            placeholder="Enter your preferences... (e.g., eggetarian + Indian)"
+          ></textarea>
+        </div>
+      </div>
+      <form
+        id="meal-form"
+        style="display: flex; justify-content: center; margin-top: 20px"
+      >
+        <button type="submit">Generate</button>
+      </form>
+      <div id="calendar-container" class="calendar"></div>
+      <div id="notes" class="notes" style="display: none"></div>
+    </div>
+
+    <div
+      id="meal-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <div
+        style="
+          background: #fff;
+          padding: 32px 24px;
+          border-radius: 8px;
+          max-width: 400px;
+          width: 90vw;
+          box-shadow: 0 2px 16px #0003;
+          position: relative;
+        "
+      >
+        <span
+          id="close-modal"
+          style="
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.5em;
+            cursor: pointer;
+          "
+          >&times;</span
+        >
+        <div id="modal-content"></div>
+      </div>
+    </div>
+
+    <script type="module" src="static/js/mealplanner.js"></script>
+  </body>
+</html>
