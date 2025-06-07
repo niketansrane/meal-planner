@@ -20,7 +20,7 @@ class MealPlannerAgent:
     def __init__(self):
         logger.info("Initializing MealPlannerAgent with Azure OpenAI client.")
         logger.info(
-            "Connection Details: %s %s",
+            "Connection Details: %s",
             {
                 "api_version": Config.AZURE_API_VERSION,
                 "azure_endpoint": Config.AZURE_ENDPOINT,
