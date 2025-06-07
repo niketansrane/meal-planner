@@ -1,19 +1,31 @@
+import logging
 import os
 from textwrap import dedent
 
 from openai import AzureOpenAI
 
-from config import Config
-from models import (
+from app.config import Config
+from app.models import (
     MealPlanResponse,
     UserMealPreferences,
     UserRequest,
     UserRequestIntent,
 )
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class MealPlannerAgent:
     def __init__(self):
+        logger.info("Initializing MealPlannerAgent with Azure OpenAI client.")
+        logger.info(
+            "Connection Details: %s %s",
+            {
+                "api_version": Config.AZURE_API_VERSION,
+                "azure_endpoint": Config.AZURE_ENDPOINT,
+            },
+        )
         self.client = AzureOpenAI(
             api_version=Config.AZURE_API_VERSION,
             azure_endpoint=Config.AZURE_ENDPOINT,

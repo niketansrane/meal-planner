@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from meal_planner_agent import MealPlannerAgent, MealPlanResponse, UserRequest
+from app.meal_planner_agent import MealPlannerAgent, MealPlanResponse, UserRequest
 
 logging.basicConfig(level=logging.INFO)
 
