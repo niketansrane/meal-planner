@@ -17,7 +17,6 @@ class Config:
 
     # Load environment variables from .env file
     AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
-    AZURE_MODEL_NAME = os.getenv("AZURE_MODEL_NAME")
     AZURE_DEPLOYMENT = os.getenv("AZURE_DEPLOYMENT")
     AZURE_SUBSCRIPTION_KEY = os.getenv("AZURE_SUBSCRIPTION_KEY")
     AZURE_API_VERSION = os.getenv("AZURE_API_VERSION")
