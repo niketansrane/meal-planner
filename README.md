@@ -2,6 +2,17 @@
 
 A personalized meal planning application powered by Azure OpenAI that generates weekly meal plans based on dietary preferences and cuisine choices.
 
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Azure OpenAI](https://img.shields.io/badge/Azure_OpenAI-0078D4?style=flat&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/en-us/products/ai-services/openai-service)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Uvicorn](https://img.shields.io/badge/Uvicorn-4051B5?style=flat&logo=python&logoColor=white)](https://www.uvicorn.org/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=flat&logo=python&logoColor=white)](https://docs.pydantic.dev/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintained by](https://img.shields.io/badge/Maintained%20by-Niketan%20Rane-blue)](https://github.com/niketansrane)
+
+
 ## Tech Stack
 
 - **Backend**: Python 3.12 with FastAPI
