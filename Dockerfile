@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# Add maintainer information
+LABEL maintainer="Niketan Rane <niketan.iiita@gmail.com>"
+
 # Create a working directory
 WORKDIR /code
 
