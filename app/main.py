@@ -1,4 +1,5 @@
 """FastAPI Application lives here."""
+
 import logging
 import os
 
@@ -6,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.config import Config
+from app.database import MealsPlannerDatabase
 from app.meal_planner_agent import MealPlannerAgent, MealPlanResponse, UserRequest
 
 logging.basicConfig(level=logging.INFO)
@@ -45,4 +48,11 @@ def meal_planner(user_request: UserRequest) -> MealPlanResponse:
             additional_notes="No meals generated based on the provided preferences.",
         )
 
+    meal_planer_db = MealsPlannerDatabase(
+        connection_string=Config.MONGODB_CONNECTION_STRING
+    )
+    # Generate random user ID for demonstration purposes
+    user_id = "random_user_id_12345"
+    meal_planer_db.add_meal_plan_for_user(user_id, meal_plan_response)
+    logger.info("Meal plan saved to database for user ID: %s", user_id)
     return meal_plan_response
